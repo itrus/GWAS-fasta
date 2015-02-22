@@ -16,7 +16,7 @@ seq.start <- 1 # Start position
 seq.length <- nchar(seq.minus$seq[[1]]) # End position
 #seq.length <- 100
 
-# Calculating the number of the most frequent nucleotide at each position of
+# Calculating the number of the most frequent aminoacid at each position of
 # controls
 moda.minus <- rep(0, seq.length)
 count.moda.minus <- rep(0, seq.length)
@@ -25,21 +25,20 @@ for (k in seq.start:(seq.length + seq.start - 1)) {
   for (i in 1:seq.minus$nb) {
     allele[i] <- substr(seq.minus$seq[[i]], k, k)
   }
-  j <- count(allele, 1)
-  # Number values are given for each nucleotide (a=1, c=2, g=3, t=4)
+  j <- count(allele, 1, alphabet=s2c("arndceqghilkmfpstwyv-*?bzjx"))
   moda.minus[k - seq.start + 1] <- which.max(j)
   count.moda.minus[k - seq.start + 1] <- j[[moda.minus[k - seq.start + 1]]]
 }
 
-# Calculation of frequency of finding the same nucleotide in positive samples
+# Calculation of frequncy of finding the same aminoacid in positive samples
 count.moda.plus <- rep(0, seq.length)
 allele <- rep("", seq.plus$nb)
 for (k in seq.start:(seq.length + seq.start - 1)) {
   for (i in 1:seq.plus$nb) {
     allele[i] <- substr(seq.plus$seq[[i]], k, k)
   }
-  j <- count(allele, 1)
-  count.moda.plus[k - seq.start + 1]<-j[moda.minus[k - seq.start + 1]]
+  j <- count(allele, 1, alphabet=s2c("arndceqghilkmfpstwyv-*?bzjx"))
+  count.moda.plus[k - seq.start + 1] <- j[moda.minus[k - seq.start + 1]]
 }
 
 # Calculation of P level (prob) for each position with Fisher's or Chi test
@@ -63,7 +62,7 @@ lines(c(1, seq.length + 1), c(-log10(0.05), -log10(0.05)), lwd=1)
 lines(c(1, seq.length + 1), c(-log10(0.01), -log10(0.01)), lwd=2)
 
 # Plotting of hystogramm of all registered P-values
-#hist(-log10(prob), ylim=c(0, 20), breaks=5000, freq=T)
+#hist(-log10(prob), ylim=c(0, 50), breaks=100, freq=T)
 
 # Cleaning of workaround
 print(Sys.time()-start.time)
